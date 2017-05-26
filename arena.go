@@ -292,11 +292,24 @@ func (arena *Arena) SubstituteTeam(teamId int, station string) error {
 func (arena *Arena) SetupNetwork() {
 	if eventSettings.NetworkSecurityEnabled {
 		go func() {
-			err := ConfigureTeamWifi(arena.AllianceStations["R1"].Team, arena.AllianceStations["R2"].Team,
-				arena.AllianceStations["R3"].Team, arena.AllianceStations["B1"].Team,
-				arena.AllianceStations["B2"].Team, arena.AllianceStations["B3"].Team)
-			if err != nil {
-				log.Printf("Failed to configure team WiFi: %s", err.Error())
+			if eventSettings.ApType == "AP1252AG" {
+				log.Printf("Configuring Cisco AP1252AG AP");
+				err := ConfigureTeamWifi(arena.AllianceStations["R1"].Team, arena.AllianceStations["R2"].Team,
+					arena.AllianceStations["R3"].Team, arena.AllianceStations["B1"].Team,
+					arena.AllianceStations["B2"].Team, arena.AllianceStations["B3"].Team)
+
+				if err != nil {
+					log.Printf("Failed to configure team WiFi: %s", err.Error())
+				}
+			} else if eventSettings.ApType == "ENH210EXT" {
+				log.Printf("Configuring EnGenius ENH210EXT AP");
+				err := ConfigureTeamWifiEngenius(arena.AllianceStations["R1"].Team, arena.AllianceStations["R2"].Team,
+					arena.AllianceStations["R3"].Team, arena.AllianceStations["B1"].Team,
+					arena.AllianceStations["B2"].Team, arena.AllianceStations["B3"].Team)
+
+				if err != nil {
+					log.Printf("Failed to configure team WiFi: %s", err.Error())
+				}
 			}
 		}()
 		go func() {

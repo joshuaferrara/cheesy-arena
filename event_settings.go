@@ -19,6 +19,7 @@ type EventSettings struct {
 	TbaSecretId                string
 	TbaSecret                  string
 	NetworkSecurityEnabled     bool
+    ApType                     string
 	ApAddress                  string
 	ApUsername                 string
 	ApPassword                 string

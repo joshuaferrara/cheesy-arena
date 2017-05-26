@@ -58,6 +58,7 @@ func SettingsPostHandler(w http.ResponseWriter, r *http.Request) {
 	eventSettings.StemTvPublishingEnabled = r.PostFormValue("stemTvPublishingEnabled") == "on"
 	eventSettings.StemTvEventCode = r.PostFormValue("stemTvEventCode")
 	eventSettings.NetworkSecurityEnabled = r.PostFormValue("networkSecurityEnabled") == "on"
+	eventSettings.ApType = r.PostFormValue("apType")
 	eventSettings.ApAddress = r.PostFormValue("apAddress")
 	eventSettings.ApUsername = r.PostFormValue("apUsername")
 	eventSettings.ApPassword = r.PostFormValue("apPassword")
