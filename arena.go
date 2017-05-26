@@ -292,7 +292,7 @@ func (arena *Arena) SubstituteTeam(teamId int, station string) error {
 func (arena *Arena) SetupNetwork() {
 	if eventSettings.NetworkSecurityEnabled {
 		go func() {
-			if eventSettings.ApType == "AP1252AG" {
+			if eventSettings.ApType == "AP1252AG" || len(eventSettings.ApType) == 0 {
 				log.Printf("Configuring Cisco AP1252AG AP");
 				err := ConfigureTeamWifi(arena.AllianceStations["R1"].Team, arena.AllianceStations["R2"].Team,
 					arena.AllianceStations["R3"].Team, arena.AllianceStations["B1"].Team,
