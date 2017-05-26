@@ -35,6 +35,7 @@ func ConfigureTeamWifiEngenius(red1, red2, red3, blue1, blue2, blue3 *Team) erro
 		}
 		addSsidsCommand += fmt.Sprintf("wless2 network ssidp %d ssidact 1\n", iface)						// Enable SSID, if it isn't already enabled
 		addSsidsCommand += fmt.Sprintf("wless2 network ssidp %d ssid %d\n", iface, team.Id)					// Set SSID
+		addSsidsCommand += fmt.Sprintf("wless2 network ssidp %d supssid 1\n", iface)						// Disable SSID broadcast
 		addSsidsCommand += fmt.Sprintf("wless2 network ssidp %d apsecu 5\n", iface)							// Enable PSK + TKIP/AES security
 		addSsidsCommand += fmt.Sprintf("wless2 network ssidp %d apsecu 5 passp %s\n", iface, team.WpaKey)	// Set WPA key
 		addSsidsCommand += fmt.Sprintf("wless2 network ssidp %d apsecu 5 accept\n", iface)					// Commit security changes
