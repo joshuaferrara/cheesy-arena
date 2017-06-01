@@ -11,28 +11,47 @@ import (
 	"fmt"
 	"net"
 	"sync"
+	"time"
+	"log"
+	"strings"
 )
 
 var engeniusTelnetPort = 23
 var engeniusMutex sync.Mutex
+var engeniusCurMutex = time.Now()
 
 // Sets up wireless networks for the given set of teams.
 func ConfigureTeamWifiEngenius(red1, red2, red3, blue1, blue2, blue3 *Team) error {
 	// Make sure multiple configurations aren't being set at the same time.
+	// Also, check that this is the latest lock, and abort if not. It's a 
+	// bit hacky, but this will speed up config times if someone spam loads matches from the UI.
+	
+	thisMutex := time.Now()
+	engeniusCurMutex = thisMutex
+
 	engeniusMutex.Lock()
 	defer engeniusMutex.Unlock()
 
+	if engeniusCurMutex != thisMutex {
+		return fmt.Errorf("WARN -> Old lock. Aborting Engenius AP config.")
+	}
+
+	teamStr := "Configuring Engenius AP for SSIDs: "
 	for _, team := range []*Team{red1, red2, red3, blue1, blue2, blue3} {
 		if team != nil && (len(team.WpaKey) < 8 || len(team.WpaKey) > 63) {
 			return fmt.Errorf("Invalid WPA key '%s' configured for team %d.", team.WpaKey, team.Id)
+		} else if team != nil {
+			teamStr += fmt.Sprintf("%d ", team.Id)
 		}
 	}
+	log.Printf("%s\n", teamStr);
 
 	addSsidsCommand := ""
 	replaceSsid := func(team *Team, vlan int, iface int) {
 		if team == nil {
 			return
 		}
+
 		addSsidsCommand += fmt.Sprintf("wless2 network ssidp %d ssidact 1\n", iface)						// Enable SSID, if it isn't already enabled
 		addSsidsCommand += fmt.Sprintf("wless2 network ssidp %d ssid %d\n", iface, team.Id)					// Set SSID
 		addSsidsCommand += fmt.Sprintf("wless2 network ssidp %d supssid 1\n", iface)						// Disable SSID broadcast
@@ -57,6 +76,8 @@ func ConfigureTeamWifiEngenius(red1, red2, red3, blue1, blue2, blue3 *Team) erro
 			return err
 		}
 	}
+
+	log.Print(strings.Replace(teamStr, "Configuring", "Configured", 1))
 
 	return nil
 }
